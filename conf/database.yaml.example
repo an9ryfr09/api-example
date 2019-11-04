@@ -1,13 +1,17 @@
 mysql:
-    host: "127.0.0.1"
-    port: 3306
-    user: an9ryfr09
-    password: yl83115$
-    dbname:
-    - dyrs_cms
-    - dyrs_photo
-    - dyrs_product
+  host: "127.0.0.1"
+  port: 3306
+  user: "an9ryfr09"
+  password: "yl83115$"
+  charset: "utf8"
+  parseTime: true
+  location: "Local"
+  db:
+  - "dyrs_cms"
+  - "dyrs_photo"
 redis:
-    host: "127.0.0.1"
-    port: "6379"
-    auth: "yl83115$"
+  host: "127.0.0.1"
+  port: 6379
+  auth: "yl83115$"
+  Protocol: "tcp"
+  Db: 0

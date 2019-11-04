@@ -1,0 +1,13 @@
+mysql:
+    host: "127.0.0.1"
+    port: "3306"
+    user: an9ryfr09
+    password: yl83115$
+    dbname:
+    - dyrs_cms
+    - dyrs_photo
+    - dyrs_product
+redis:
+    host: "127.0.0.1"
+    port: "6379"
+    auth: "yl83115$"

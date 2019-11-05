@@ -2,17 +2,23 @@ package main
 
 import (
 	"a6-api/middleware"
+	router "a6-api/router"
 
 	"github.com/gin-gonic/gin"
 )
 
+var Router *gin.Engine
+var RouterGroup *gin.RouterGroup
+
 func main() {
-	r := gin.New()
-	r.Use(middleware.LoadConf())
-	r.GET("/ping", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "pong",
-		})
-	})
-	r.Run()
+	router.Router(RouterGroup)
+	middleware.LoadConf()
+	Router.Run(":5000")
+}
+
+func loadRouter() {
+	apiv2 := Router.Group("/api/v1")
+	rest := apiv2.Group("/rest")
+	router.Router(rest)
+
 }

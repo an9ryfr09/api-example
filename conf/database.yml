@@ -15,3 +15,6 @@ redis:
   auth: "yl83115$"
   Protocol: "tcp"
   Db: 0
+http:
+  host: "127.0.0.1"
+  port: 8316

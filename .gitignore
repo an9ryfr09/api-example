@@ -1,3 +1,2 @@
 .vscode
--rpc.trace
 conf/database.yaml

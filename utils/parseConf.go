@@ -27,6 +27,10 @@ type DbConf struct {
 		Protocol string `yaml:"protocol"`
 		Db       int    `yaml:"db"`
 	}
+	Http struct {
+		Host string `yaml:"host"`
+		Port int    `yaml:"port"`
+	}
 }
 
 type Conf struct {
@@ -35,6 +39,10 @@ type Conf struct {
 		Addr     string
 		Password string
 		Db       int
+	}
+	HttpOptions struct {
+		Host string
+		Port int
 	}
 }
 
@@ -62,4 +70,6 @@ func (c *Conf) LoadConf() {
 	c.RedisOptions.Addr = fmt.Sprintf("%s:%d", conf.Redis.Host, conf.Redis.Port)
 	c.RedisOptions.Password = conf.Redis.Auth
 	c.RedisOptions.Db = conf.Redis.Db
+	c.HttpOptions.Host = conf.Http.Host
+	c.HttpOptions.Port = conf.Http.Port
 }

@@ -6,7 +6,7 @@ mysql:
   charset: "utf8"
   parseTime: true
   location: "Local"
-  db:
+           db:
   - "dyrs_cms"
   - "dyrs_photo"
 redis:
@@ -16,5 +16,8 @@ redis:
   Protocol: "tcp"
   Db: 0
 http:
-  host: "127.0.0.1"
+  host: ""
   port: 8316
+  read_timeout: 30
+  write_timeout: 30
+  max_header_bytes: 1048576

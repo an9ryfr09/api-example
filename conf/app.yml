@@ -1,3 +1,4 @@
+run_mode: "debug"
 mysql:
   host: "127.0.0.1"
   port: 3306
@@ -6,7 +7,7 @@ mysql:
   charset: "utf8"
   parseTime: true
   location: "Local"
-           db:
+  db:
   - "dyrs_cms"
   - "dyrs_photo"
 redis:
@@ -21,3 +22,5 @@ http:
   read_timeout: 30
   write_timeout: 30
   max_header_bytes: 1048576
+jwt:
+  secret: "jwt_an9ryfr09_#*?!"

@@ -1,0 +1,41 @@
+app:
+  #value of sets: debug, test, release
+  run_mode: "debug"
+  database_type: "mysql"
+mysql:
+  host: "127.0.0.1"
+  port: 3306
+  user: "an9ryfr09"
+  password: "yl83115$"
+  charset: "utf8"
+  parseTime: true
+  location: "Local"
+  table_pre: "dyrs_"
+  #global table name use singular
+  singular_table_name: true
+  #max idle connection numbers
+  max_idle_conn: 10
+  #max open connection numbers
+  max_open_conn: 100
+  db:
+    - "cms"
+    - "photo"
+redis:
+  host: "127.0.0.1"
+  port: 6379
+  auth: "yl83115$"
+  Protocol: "tcp"
+  Db: 0
+server:
+  host: "0.0.0.0"
+  port: 8316
+  read_timeout: 30
+  write_timeout: 30
+  idle_timeout: 30
+  max_header_bytes: 1048576
+  enable_tls: true
+  ssl_certfile_path: "./ca/server.crt"
+  ssl_keyfile_path: "./ca/server.key"
+
+jwt:
+  secret: "jwt_an9ryfr09_#*?!"

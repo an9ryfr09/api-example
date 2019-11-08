@@ -1,6 +1,8 @@
 package jwt
 
 import (
+	e "a6-api/packages/error"
+	"a6-api/utils"
 	"net/http"
 	"time"
 
@@ -17,7 +19,7 @@ func JWT() gin.HandlerFunc {
 		if token == "" {
 			code = e.INVALID_PARAMS
 		} else {
-			claims, err := util.ParseToken(token)
+			claims, err := utils.ParseToken(token)
 			if err != nil {
 				code = e.ERROR_AUTH_CHECK_TOKEN_FAIL
 			} else if time.Now().Unix() > claims.ExpiresAt {
@@ -28,7 +30,7 @@ func JWT() gin.HandlerFunc {
 		if code != e.SUCCESS {
 			c.JSON(http.StatusUnauthorized, gin.H{
 				"code": code,
-				"msg":  e.GetMsg(code),
+				"msg":  e.GetMessage(code),
 				"data": data,
 			})
 

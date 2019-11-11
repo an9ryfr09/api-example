@@ -1,25 +1,16 @@
-package handler
+package model
 
 import (
-	configure "a6-api/packages/conf"
+	configure "a6-api/pkg/loader"
 	"log"
 
 	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/mysql"
 )
 
 var db *gorm.DB
 
-type Moder interface {
-	List()
-	Detail()
-}
-
-type Model struct {
-	ID int `gorm:"primary_key" json:"id"`
-}
-
 func init() {
+
 	db, err := gorm.Open(configure.AppConf.DbType, configure.MysqlConf.Dsn)
 
 	if err != nil {

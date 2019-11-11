@@ -1,7 +1,7 @@
 package jwt
 
 import (
-	e "a6-api/packages/error"
+	e "a6-api/pkg/error"
 	"a6-api/utils"
 	"net/http"
 	"time"

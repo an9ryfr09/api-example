@@ -5,12 +5,27 @@ import (
 	"log"
 
 	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/mysql"
 )
 
 var db *gorm.DB
 
-func init() {
+type Modeler interface {
+	List() string
+	Detail() string
+}
 
+type Model struct{}
+
+func (model *Model) List(m Modeler) string {
+	return m.List()
+}
+
+func (model *Model) Detail(m Modeler) string {
+	return m.Detail()
+}
+
+func init() {
 	db, err := gorm.Open(configure.AppConf.DbType, configure.MysqlConf.Dsn)
 
 	if err != nil {
@@ -18,7 +33,7 @@ func init() {
 	}
 
 	gorm.DefaultTableNameHandler = func(db *gorm.DB, defaultTableName string) string {
-		return configure.MysqlConf.TablePre + defaultTableName
+		return configure.MysqlConf.DbPre + defaultTableName
 	}
 
 	//table name not use plural

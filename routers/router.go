@@ -1,11 +1,7 @@
 package v1
 
 import (
-	"net/http"
-
-	photoV1 "a6-api/models/v1/photo"
-	handler "a6-api/routers/handler"
-
+	handlerV1 "a6-api/routers/handler/v1"
 	"github.com/gin-gonic/gin"
 )
 
@@ -15,34 +11,10 @@ func InitRouter(g *gin.Engine) {
 	v1 := g.Group("/v1")
 	{
 		//subject list
-		v1.GET("/subjects", func(c *gin.Context) {
-			var subject photoV1.Subject
-			subject.List()
-			// var data string
-			// var subject *photoV1.Subject
-			// var model handler.Modeler
-			// model = subject
-			// data = model.List()
-			c.JSON(200, gin.H{
-				"code":    http.StatusOK,
-				"message": "ok",
-				"data":    subject.List(),
-			})
-		})
+		v1.GET("/subjects", handlerV1.SubjectList)
 
 		//subject detail
-		v1.GET("/subjects/:id", func(c *gin.Context) {
-			var data string
-			var subject *photoV1.Subject
-			var model handler.Modeler
-			model = subject
-			data = model.Detail()
-			c.JSON(200, gin.H{
-				"code":    http.StatusOK,
-				"message": "ok",
-				"data":    data,
-			})
-		})
+		v1.GET("/subjects/:id", handlerV1.SubjectDetail)
 
 		// //building list
 		// v1.GET("/buildings", photoV1.Building.List)

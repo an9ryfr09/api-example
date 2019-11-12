@@ -27,18 +27,18 @@ type ConfFile struct {
 		DbType  string `yaml:"database_type"`
 	}
 	Mysql struct {
-		Host          string   `yaml:"host"`
-		Port          int      `yaml:"port"`
-		User          string   `yaml:"user"`
-		Password      string   `yaml:"password"`
-		Charset       string   `yaml:"charset"`
-		ParseTime     bool     `yaml:"parseTime"`
-		Location      string   `yaml:"loc"`
-		Db            []string `yaml:"db"`
-		TablePre      string   `yaml:"table_pre"`
-		MaxIdleConn   int      `yaml:"max_idle_conn"`
-		MaxOpenConn   int      `yaml:"max_open_conn"`
-		SingularTable bool     `yaml:"singular_table_name"`
+		Host          string `yaml:"host"`
+		Port          int    `yaml:"port"`
+		User          string `yaml:"user"`
+		Password      string `yaml:"password"`
+		Charset       string `yaml:"charset"`
+		ParseTime     bool   `yaml:"parseTime"`
+		Location      string `yaml:"loc"`
+		Db            string `yaml:"db"`
+		DbPre         string `yaml:"db_pre"`
+		MaxIdleConn   int    `yaml:"max_idle_conn"`
+		MaxOpenConn   int    `yaml:"max_open_conn"`
+		SingularTable bool   `yaml:"singular_table_name"`
 	}
 	Redis struct {
 		Host     string `yaml:"host"`
@@ -82,7 +82,7 @@ func (c *AppOptions) loadOptions() {
 //mysql options
 type MysqlOptions struct {
 	Dsn           string
-	TablePre      string
+	DbPre         string
 	MaxIdleConn   int
 	MaxOpenConn   int
 	SingularTable bool
@@ -91,8 +91,8 @@ type MysqlOptions struct {
 //this method implements ConfLoader interface.
 //load mysql options this method load mysql runtime options.
 func (c *MysqlOptions) loadOptions() {
-	c.Dsn = fmt.Sprintf("%s@(%s:%d)/%s?charset=%s&parseTime=%t&loc=%s", conf.Mysql.User, conf.Mysql.Host, conf.Mysql.Port, conf.Mysql.Db, conf.Mysql.Charset, conf.Mysql.ParseTime, conf.Mysql.Location)
-	c.TablePre = conf.Mysql.TablePre
+	c.Dsn = fmt.Sprintf("%s:%s@(%s:%d)/%s%s?charset=%s&parseTime=%t&loc=%s", conf.Mysql.User, conf.Mysql.Password, conf.Mysql.Host, conf.Mysql.Port, conf.Mysql.DbPre, conf.Mysql.Db, conf.Mysql.Charset, conf.Mysql.ParseTime, conf.Mysql.Location)
+	c.DbPre = conf.Mysql.DbPre
 	c.MaxIdleConn = conf.Mysql.MaxIdleConn
 	c.MaxOpenConn = conf.Mysql.MaxOpenConn
 	c.SingularTable = conf.Mysql.SingularTable

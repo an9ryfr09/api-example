@@ -5,9 +5,9 @@ type Subject struct {
 }
 
 func (s *Subject) List() string {
-	return "abc"
+	return "subject list"
 }
 
 func (s *Subject) Detail() string {
-	return "bcd"
+	return "subject list"
 }

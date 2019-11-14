@@ -1,7 +1,7 @@
 package v1
 
 import (
-	handlerV1 "a6-api/routers/handler/v1"
+	handlerV1 "a6-api/handlers/v1"
 	"github.com/gin-gonic/gin"
 )
 
@@ -14,35 +14,35 @@ func InitRouter(g *gin.Engine) {
 		v1.GET("/subjects", handlerV1.SubjectList)
 
 		//subject detail
-		v1.GET("/subjects/:id", handlerV1.SubjectDetail)
+		v1.GET("/subject/:id", handlerV1.SubjectDetail)
 
 		// //building list
-		// v1.GET("/buildings", photoV1.Building.List)
+		// v1.GET("/buildings", handlerV1.Building.List)
 		// //building detail
-		// v1.GET("/buildings/:id", photoV1.Building.Detail)
+		// v1.GET("/building/:id", handlerV1.Building.Detail)
 
 		// //designer list
-		// v1.GET("/designers", photoV1.Designer.List)
+		// v1.GET("/designers", handlerV1.Designer.List)
 		// //designer detail
-		// v1.GET("/designers/:id", photoV1.Designer.Detail)
+		// v1.GET("/designer/:id", handlerV1.Designer.Detail)
 	}
 
 	//setting router group of version 2
 	// v2 := g.Group("/v2")
 	// {
 	// 	//subject list
-	// 	v2.GET("/subjects", photoV2.Subject.List)
+	// 	v2.GET("/subjects", handlerV2.Subject.List)
 	// 	//subject detail
-	// 	v2.GET("/subjects/:id", photoV2.Subject.Detail)
+	// 	v2.GET("/subject/:id", handlerV2.Subject.Detail)
 
 	// 	//building list
-	// 	v2.GET("/buildings", photoV2.Building.List)
+	// 	v2.GET("/buildings", handlerV2.Building.List)
 	// 	//building detail
-	// 	v2.GET("/buildings/:id", photoV2.Building.Detail)
+	// 	v2.GET("/building/:id", handlerV2.Building.Detail)
 
 	// 	//designer list
-	// 	v2.GET("/designers", photoV2.Designer.List)
+	// 	v2.GET("/designers", handlerV2.Designer.List)
 	// 	//designer detail
-	// 	v2.GET("/designers/:id", photoV2.Designer.Detail)
+	// 	v2.GET("/designer/:id", handlerV2.Designer.Detail)
 	// }
 }

@@ -9,24 +9,23 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 )
 
-var subject *photo.Subject
-var building *photo.Building
-var designer *photo.Designer
-
 var modeler *model.Model
+var subject *photo.Subject
 
-func SubjectList(c *gin.Context) {
-	c.JSON(200, gin.H{
+var SubjectList = func(c *gin.Context) {
+	data := modeler.List(subject)
+	defer c.JSON(200, gin.H{
 		"code":    http.StatusOK,
 		"message": "ok",
-		"data":    modeler.List(subject),
+		"data":    data,
 	})
 }
 
-func SubjectDetail(c *gin.Context) {
-	c.JSON(200, gin.H{
+var SubjectDetail = func(c *gin.Context) {
+	data := modeler.Detail(subject)
+	defer c.JSON(200, gin.H{
 		"code":    http.StatusOK,
 		"message": "ok",
-		"data":    modeler.Detail(subject),
+		"data":    data,
 	})
 }

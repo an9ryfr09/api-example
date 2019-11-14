@@ -2,6 +2,8 @@ app:
   #value of sets: debug, test, release
   run_mode: "debug"
   database_type: "mysql"
+  #value of cpu core numbers
+  cpu_core_num: 6
 mysql:
   host: "127.0.0.1"
   port: 3306

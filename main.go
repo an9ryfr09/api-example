@@ -1,13 +1,14 @@
 package main
 
 import (
-	configure "a6-api/pkg/loader"
 	router "a6-api/routers"
+	configure "a6-api/utils/loader"
 	"context"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
+	"runtime"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -21,13 +22,23 @@ func init() {
 }
 
 func initServer() {
+	//set cpu core numbers
+	runtime.GOMAXPROCS(configure.AppConf.CpuCoreNum)
+
+	//run mode [debug|test|release]
 	gin.SetMode(configure.AppConf.RunMode)
+
 	app = gin.New()
+
+	//set middleware
 	app.Use(gin.Logger())
 	app.Use(gin.Recovery())
 	// app.Use(jwt.JWT())
+
+	//initialization routers
 	router.InitRouter(app)
-	//setting server options
+
+	//set server options
 	srv := &http.Server{
 		Addr:           configure.ServerConf.Addr,
 		Handler:        app,
@@ -37,21 +48,20 @@ func initServer() {
 		MaxHeaderBytes: configure.ServerConf.MaxHeaderBytes,
 	}
 
-	//if this item value is true, then enabled https protocol, otherwise use http protocol only
+	//if this item value is true, then enabled the https protocol, otherwise use the http protocol only
 	if configure.ServerConf.EnableTLS == true {
 		go func() {
 			srv.ListenAndServeTLS(configure.ServerConf.SSLCertfilePath, configure.ServerConf.SSLKeyfilePath)
 		}()
-		// app.RunTLS(configure.ServerConf.Addr, configure.ServerConf.SSLCertfilePath, configure.ServerConf.SSLKeyfilePath)
 	} else {
 		go func() {
 			srv.ListenAndServe()
 		}()
-		// app.Run(configure.ServerConf.Addr)
 	}
 }
 
 func main() {
+	//start up http server on goroutine, and receive unix signals to shutdown;
 	quit := make(chan os.Signal)
 	signal.Notify(quit, os.Interrupt)
 	<-quit

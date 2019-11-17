@@ -1,7 +1,7 @@
 package main
 
 import (
-	"a6-api/routes"
+	"a6-api/router"
 	"a6-api/utils/loader"
 	"context"
 	"log"
@@ -63,6 +63,7 @@ func initServer() {
 }
 
 func main() {
+	//reload config
 	s := make(chan os.Signal, 1)
 	signal.Notify(s, syscall.SIGUSR1)
 	go func() {

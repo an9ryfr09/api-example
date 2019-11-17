@@ -51,7 +51,7 @@ jwt:
   secret: "jwt_an9ryfr09_#*?!"
 log:
   #log file path
-  path: ./logs
+  path: logs
   #max life time(unit:day)
   max_age: 1
   #log split time(unit:day)

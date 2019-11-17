@@ -3,6 +3,8 @@ package handler
 import (
 	handler "a6-api/handlers"
 	photoModel "a6-api/models/v1/photo"
+	"a6-api/utils/loader"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -14,6 +16,7 @@ var subjectModel *photoModel.Subject
 
 //SubjectList return subject list
 func SubjectList(c *gin.Context) {
+	fmt.Println(loader.Load().Core.PerPageNum)
 	var params = photoModel.SubjectListParams{}
 
 	if c.Bind(&params) != nil {

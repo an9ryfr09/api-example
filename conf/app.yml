@@ -39,8 +39,7 @@ redis:
   Protocol: "tcp"
   Db: 0
 server:
-  host: "0.0.0.0"
-  port: 8316
+  addr: ":8316"
   read_timeout: 30
   write_timeout: 30
   idle_timeout: 30

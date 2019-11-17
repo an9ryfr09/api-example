@@ -1,14 +1,15 @@
 package main
 
 import (
-	router "a6-api/routes"
-	configure "a6-api/utils/loader"
+	"a6-api/routes"
+	"a6-api/utils/loader"
 	"context"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
 	"runtime"
+	"syscall"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -23,10 +24,10 @@ func init() {
 
 func initServer() {
 	//set cpu core numbers
-	runtime.GOMAXPROCS(int(configure.CoreConf.CpuCoreNum))
+	runtime.GOMAXPROCS(int(loader.Load().Core.CpuCoreNum))
 
 	//run mode [debug|test|release]
-	gin.SetMode(configure.CoreConf.RunMode)
+	gin.SetMode(loader.Load().Core.RunMode)
 
 	app = gin.New()
 
@@ -41,18 +42,18 @@ func initServer() {
 
 	//set server options
 	srv := &http.Server{
-		Addr:           configure.ServerConf.Addr,
+		Addr:           loader.Load().Server.Addr,
 		Handler:        app,
-		ReadTimeout:    configure.ServerConf.ReadTimeout,
-		WriteTimeout:   configure.ServerConf.WriteTimeout,
-		IdleTimeout:    configure.ServerConf.IdleTimeout,
-		MaxHeaderBytes: int(configure.ServerConf.MaxHeaderBytes),
+		ReadTimeout:    loader.Load().Server.ReadTimeout * time.Second,
+		WriteTimeout:   loader.Load().Server.WriteTimeout * time.Second,
+		IdleTimeout:    loader.Load().Server.IdleTimeout * time.Second,
+		MaxHeaderBytes: int(loader.Load().Server.MaxHeaderBytes),
 	}
 
 	//if this item value is true, then enabled the https protocol, otherwise use the http protocol only
-	if configure.ServerConf.EnableTLS == true {
+	if loader.Load().Server.EnableTLS == true {
 		go func() {
-			srv.ListenAndServeTLS(configure.ServerConf.SSLCertfilePath, configure.ServerConf.SSLKeyfilePath)
+			srv.ListenAndServeTLS(loader.Load().Server.SSLCertfilePath, loader.Load().Server.SSLKeyfilePath)
 		}()
 	} else {
 		go func() {
@@ -62,6 +63,15 @@ func initServer() {
 }
 
 func main() {
+	s := make(chan os.Signal, 1)
+	signal.Notify(s, syscall.SIGUSR1)
+	go func() {
+		for {
+			<-s
+			loader.Reload()
+			log.Println("Reloaded config")
+		}
+	}()
 
 	//start up http server on goroutine, and receive unix signals to shutdown;
 	quit := make(chan os.Signal)

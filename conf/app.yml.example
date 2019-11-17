@@ -39,8 +39,7 @@ redis:
   Protocol: "tcp"
   Db: 0
 server:
-  host: "0.0.0.0"
-  port: 8316
+  addr: ":8316"
   read_timeout: 30
   write_timeout: 30
   idle_timeout: 30
@@ -53,7 +52,7 @@ jwt:
 log:
   #log file path
   path: ./logs
-  #max life time
-  max_age: 30
-  #log split time
-  split_time:
+  #max life time(unit:day)
+  max_age: 1
+  #log split time(unit:day)
+  split_time: 1

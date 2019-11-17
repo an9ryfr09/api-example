@@ -1,7 +1,9 @@
 package photo
 
 import (
-	configure "a6-api/utils/loader"
+	"a6-api/utils/loader"
+	"fmt"
+	"log"
 	"reflect"
 	"strings"
 
@@ -22,23 +24,25 @@ func (p *Photo) TablePrefix() string {
 
 func init() {
 	var err error
-	db, err = gorm.Open(configure.CoreConf.DbType, configure.MysqlConf.Dsn[1])
+	photo := Photo{}
+	dsn := fmt.Sprintf("%s:%s@(%s:%d)/%s%s?charset=%s&parseTime=%t&loc=%s", loader.Load().Mysql.User, loader.Load().Mysql.Password, loader.Load().Mysql.Host, loader.Load().Mysql.Port, loader.Load().Mysql.DbPre, photo.TablePrefix(), loader.Load().Mysql.Charset, loader.Load().Mysql.ParseTime, loader.Load().Mysql.Location)
+	db, err = gorm.Open(loader.Load().Core.DbType, dsn)
 
 	if err != nil {
-
+		log.Fatal(err.Error())
 	}
 
 	//enabled db log
 	db.LogMode(true)
 
 	//table name not use plural
-	db.SingularTable(configure.MysqlConf.SingularTable)
+	db.SingularTable(loader.Load().Mysql.SingularTable)
 
 	/* db link pool BEGIN */
 	//max idle connection numbers
-	db.DB().SetMaxIdleConns(int(configure.MysqlConf.MaxIdleConn))
+	db.DB().SetMaxIdleConns(int(loader.Load().Mysql.MaxIdleConn))
 	//max open connection numbers
-	db.DB().SetMaxOpenConns(int(configure.MysqlConf.MaxOpenConn))
+	db.DB().SetMaxOpenConns(int(loader.Load().Mysql.MaxOpenConn))
 	/* db link pool END */
 }
 

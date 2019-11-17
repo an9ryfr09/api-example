@@ -2,7 +2,7 @@ package handler
 
 import (
 	handler "a6-api/handlers"
-	model "a6-api/models/v1/photo"
+	photoModel "a6-api/models/v1/photo"
 	"net/http"
 	"strconv"
 
@@ -10,15 +10,16 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 )
 
-var subjectModel *model.Subject
+var subjectModel *photoModel.Subject
 
 //SubjectList return subject list
 func SubjectList(c *gin.Context) {
-	var params = model.SubjectListParams{}
+	var params = photoModel.SubjectListParams{}
 
-	if c.ShouldBind(&params) != nil {
-		handler.ErrorMsg(c, http.StatusUnprocessableEntity, "")
+	if c.Bind(&params) != nil {
+		handler.ErrorMsg(c, http.StatusBadRequest, "")
 	}
+
 	data, pagin, notFound := subjectModel.List(params)
 	if notFound {
 		handler.ErrorMsg(c, http.StatusNotFound, "not found record")
@@ -31,7 +32,7 @@ func SubjectList(c *gin.Context) {
 func SubjectDetail(c *gin.Context) {
 	id, err := strconv.ParseUint(c.Param("id"), 10, 64)
 	if err != nil {
-		handler.ErrorMsg(c, http.StatusUnprocessableEntity, "The param \"id\" type of uint64")
+		handler.ErrorMsg(c, http.StatusBadRequest, "The param \"id\" type of uint64")
 		return
 	}
 

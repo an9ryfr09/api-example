@@ -33,7 +33,8 @@ func initServer() {
 	//set middleware
 	app.Use(gin.Logger())
 	app.Use(gin.Recovery())
-	// app.Use(jwt.JWT())
+	// app.Use(middleware.JWT())
+	// app.Use(middleware.Validator())
 
 	//initialization routers
 	router.InitRouter(app)

@@ -103,7 +103,15 @@ type DetailFields struct {
 
 type SubjectListParams struct {
 	model.ListParams
-	Subject string `form:"subject"`
+	DesignerId     uint64 `form:"designer_id" json:"designer_id"`
+	CompanyId      uint64 `form:"company_id"`
+	HouseTypeId    uint8  `form:"houseTypeId"`
+	StyleId        uint8  `form:"style_id"`
+	AreaId         uint8  `form:"area_id"`
+	SiteId         uint8  `form:"site_id"`
+	LoupanId       uint64 `form:"loupan_id"`
+	DecorationType uint8  `form:"decoration_type"`
+	Type           uint8  `form:"type"`
 }
 
 type SubjectDetailParams struct {
@@ -124,18 +132,14 @@ func (s *Subject) List(p SubjectListParams) (fields []ListFields, pagin map[stri
 	var totalNum uint32
 
 	db.Table(s.TableName()).Count(&totalNum)
+	//get pagin data
 	totalPage, offset := helper.Paginator(totalNum, p.PerPageNum, p.Page)
 	if err := db.Table(s.TableName()).Offset(offset).Limit(p.PerPageNum).Scan(&fields).Error; err != nil {
 		return []ListFields{}, pagin, true
 	}
 
-	pagin = map[string]interface{}{
-		"totalNum":   totalNum,
-		"totalPage":  totalPage,
-		"page":       p.Page,
-		"perPageNum": p.PerPageNum,
-		"offset":     offset,
-	}
+	//get pagin info
+	pagin = helper.GeneratePaginInfo(totalNum, totalPage, p.Page, p.PerPageNum, offset)
 	return
 }
 

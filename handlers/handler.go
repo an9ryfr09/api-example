@@ -13,18 +13,14 @@ type Record map[string]interface{}
 
 //wrapRecord wrap record
 func wrapRecord(data interface{}, pagin map[string]interface{}) (record Record) {
-	var wrapContent string
 	t := reflect.TypeOf(data)
 	switch t.Kind() {
 	case reflect.Slice, reflect.Array:
-		wrapContent = "list"
-		record = Record{wrapContent: data, "paginInfo": pagin}
+		record = Record{"list": data, "paginInfo": pagin}
 	case reflect.Struct:
-		wrapContent = "detail"
-		record = Record{wrapContent: data}
+		record = Record{"detail": data}
 	default:
-		wrapContent = "content"
-		record = Record{wrapContent: data}
+		record = Record{"content": data}
 	}
 	return
 }

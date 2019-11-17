@@ -1,7 +1,7 @@
 package main
 
 import (
-	router "a6-api/routers"
+	router "a6-api/routes"
 	configure "a6-api/utils/loader"
 	"context"
 	"log"
@@ -23,10 +23,10 @@ func init() {
 
 func initServer() {
 	//set cpu core numbers
-	runtime.GOMAXPROCS(configure.AppConf.CpuCoreNum)
+	runtime.GOMAXPROCS(int(configure.CoreConf.CpuCoreNum))
 
 	//run mode [debug|test|release]
-	gin.SetMode(configure.AppConf.RunMode)
+	gin.SetMode(configure.CoreConf.RunMode)
 
 	app = gin.New()
 
@@ -45,7 +45,7 @@ func initServer() {
 		ReadTimeout:    configure.ServerConf.ReadTimeout,
 		WriteTimeout:   configure.ServerConf.WriteTimeout,
 		IdleTimeout:    configure.ServerConf.IdleTimeout,
-		MaxHeaderBytes: configure.ServerConf.MaxHeaderBytes,
+		MaxHeaderBytes: int(configure.ServerConf.MaxHeaderBytes),
 	}
 
 	//if this item value is true, then enabled the https protocol, otherwise use the http protocol only
@@ -61,6 +61,7 @@ func initServer() {
 }
 
 func main() {
+
 	//start up http server on goroutine, and receive unix signals to shutdown;
 	quit := make(chan os.Signal)
 	signal.Notify(quit, os.Interrupt)

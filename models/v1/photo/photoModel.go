@@ -2,13 +2,11 @@ package photo
 
 import (
 	configure "a6-api/utils/loader"
-	"fmt"
-	_ "github.com/jinzhu/gorm/dialects/mysql"
-	"log"
 	"reflect"
 	"strings"
 
 	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/mysql"
 )
 
 var db *gorm.DB
@@ -23,25 +21,24 @@ func (p *Photo) TablePrefix() string {
 }
 
 func init() {
-	fmt.Println(configure.AppConf.DbType)
-	db, err := gorm.Open(configure.AppConf.DbType, configure.MysqlConf.Dsn[1])
+	var err error
+	db, err = gorm.Open(configure.CoreConf.DbType, configure.MysqlConf.Dsn[1])
 
 	if err != nil {
-		log.Println(err)
+
 	}
 
-	gorm.DefaultTableNameHandler = func(db *gorm.DB, defaultTableName string) string {
-		return configure.MysqlConf.DbPre + defaultTableName
-	}
+	//enabled db log
+	db.LogMode(true)
 
 	//table name not use plural
 	db.SingularTable(configure.MysqlConf.SingularTable)
 
 	/* db link pool BEGIN */
 	//max idle connection numbers
-	db.DB().SetMaxIdleConns(configure.MysqlConf.MaxIdleConn)
+	db.DB().SetMaxIdleConns(int(configure.MysqlConf.MaxIdleConn))
 	//max open connection numbers
-	db.DB().SetMaxOpenConns(configure.MysqlConf.MaxOpenConn)
+	db.DB().SetMaxOpenConns(int(configure.MysqlConf.MaxOpenConn))
 	/* db link pool END */
 }
 

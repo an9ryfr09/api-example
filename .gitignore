@@ -1,2 +1,4 @@
 .vscode
-conf/database.yaml
+conf/app.yml
+logs
+ca

@@ -10,51 +10,56 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-type ConfLoader interface {
+type confLoader interface {
 	loadOptions()
 }
 
 /*
-* ConfFile this struct and app.yml corresponding.
+* confFile this struct and app.yml corresponding.
+* Core app runtime options
 * Mysql database link options.
 * Redis database link options.
 * Http http server options.
 * Jwt authentication params.
  */
-type ConfFile struct {
-	App struct {
+type confFile struct {
+	Core struct {
 		RunMode    string `yaml:"run_mode"`
 		DbType     string `yaml:"database_type"`
-		CpuCoreNum int    `yaml:"cpu_core_num"`
+		CpuCoreNum uint8  `yaml:"cpu_core_num"`
+		PerPageNum uint16 `yaml:"per_page_num"`
 	}
 	Mysql struct {
-		Host          string   `yaml:"host"`
-		Port          int      `yaml:"port"`
-		User          string   `yaml:"user"`
-		Password      string   `yaml:"password"`
-		Charset       string   `yaml:"charset"`
-		ParseTime     bool     `yaml:"parseTime"`
-		Location      string   `yaml:"location"`
-		Db            []string `yaml:"db"`
-		DbPre         string   `yaml:"db_pre"`
-		MaxIdleConn   int      `yaml:"max_idle_conn"`
-		MaxOpenConn   int      `yaml:"max_open_conn"`
-		SingularTable bool     `yaml:"singular_table_name"`
+		Host          string        `yaml:"host"`
+		Port          uint16        `yaml:"port"`
+		User          string        `yaml:"user"`
+		Password      string        `yaml:"password"`
+		Charset       string        `yaml:"charset"`
+		ParseTime     bool          `yaml:"parseTime"`
+		Location      string        `yaml:"location"`
+		Timeout       time.Duration `yaml:"timeout"`
+		ReadTimeOut   time.Duration `yaml:"read_time_out"`
+		WriteTimeOut  time.Duration `yaml:"write_time_out"`
+		Db            []string      `yaml:"db"`
+		DbPre         string        `yaml:"db_pre"`
+		MaxIdleConn   uint16        `yaml:"max_idle_conn"`
+		MaxOpenConn   uint16        `yaml:"max_open_conn"`
+		SingularTable bool          `yaml:"singular_table_name"`
 	}
 	Redis struct {
 		Host     string `yaml:"host"`
-		Port     int    `yaml:"port"`
+		Port     uint16 `yaml:"port"`
 		Auth     string `yaml:"auth"`
 		Protocol string `yaml:"protocol"`
-		Db       int    `yaml:"db"`
+		Db       uint8  `yaml:"db"`
 	}
 	Server struct {
 		Host            string        `yaml:"host"`
-		Port            int           `yaml:"port"`
+		Port            uint16        `yaml:"port"`
 		ReadTimeout     time.Duration `yaml:"read_timeout"`
 		WriteTimeout    time.Duration `yaml:"write_timeout"`
 		IdleTimeout     time.Duration `yaml:"idle_timeout"`
-		MaxHeaderBytes  int           `yaml:"max_header_bytes"`
+		MaxHeaderBytes  uint64        `yaml:"max_header_bytes"`
 		EnableTLS       bool          `yaml:"enable_tls"`
 		SSLCertfilePath string        `yaml:"ssl_certfile_path"`
 		SSLKeyfilePath  string        `yaml:"ssl_keyfile_path"`
@@ -62,42 +67,56 @@ type ConfFile struct {
 	Jwt struct {
 		Secret string `yaml:"secret"`
 	}
+	Log struct {
+		Path      string        `yaml:"path"`
+		MaxAge    time.Duration `yaml:"max_age"`
+		SplitTime time.Duration `yaml:"split_time"`
+	}
 }
 
 //conf type of *ConfFile, this variable storage app.yml contents.
-var conf *ConfFile
+var conf *confFile
 
-//app options
-type AppOptions struct {
+//core options
+type coreOptions struct {
 	RunMode    string
 	DbType     string
-	CpuCoreNum int
+	CpuCoreNum uint8
+	PerPageNum uint16
+	LogPath    string
 }
 
-//this method implements ConfLoader interface.
+//this method implements confLoader interface.
 //load app options this method load the Gin framework runtime options.
-func (c *AppOptions) loadOptions() {
-	c.CpuCoreNum = conf.App.CpuCoreNum
-	c.RunMode = conf.App.RunMode
-	c.DbType = conf.App.DbType
+func (c *coreOptions) loadOptions() {
+	c.CpuCoreNum = conf.Core.CpuCoreNum
+	c.RunMode = conf.Core.RunMode
+	c.DbType = conf.Core.DbType
+	c.PerPageNum = conf.Core.PerPageNum
 }
 
 //mysql options
-type MysqlOptions struct {
+type mysqlOptions struct {
 	Dsn           []string
+	Timeout       time.Duration
+	ReadTimeOut   time.Duration
+	WriteTimeOut  time.Duration
 	DbPre         string
-	MaxIdleConn   int
-	MaxOpenConn   int
+	MaxIdleConn   uint16
+	MaxOpenConn   uint16
 	SingularTable bool
 }
 
-//this method implements ConfLoader interface.
+//this method implements confLoader interface.
 //load mysql options this method load mysql runtime options.
-func (c *MysqlOptions) loadOptions() {
+func (c *mysqlOptions) loadOptions() {
 	for _, db := range conf.Mysql.Db {
 		c.Dsn = append(c.Dsn, fmt.Sprintf("%s:%s@(%s:%d)/%s%s?charset=%s&parseTime=%t&loc=%s", conf.Mysql.User, conf.Mysql.Password, conf.Mysql.Host, conf.Mysql.Port, conf.Mysql.DbPre, db, conf.Mysql.Charset, conf.Mysql.ParseTime, conf.Mysql.Location))
 	}
 
+	c.Timeout = conf.Mysql.Timeout * time.Second
+	c.ReadTimeOut = conf.Mysql.ReadTimeOut * time.Second
+	c.WriteTimeOut = conf.Mysql.WriteTimeOut * time.Second
 	c.DbPre = conf.Mysql.DbPre
 	c.MaxIdleConn = conf.Mysql.MaxIdleConn
 	c.MaxOpenConn = conf.Mysql.MaxOpenConn
@@ -105,35 +124,35 @@ func (c *MysqlOptions) loadOptions() {
 }
 
 //redis options
-type RedisOptions struct {
+type redisOptions struct {
 	Addr     string
 	Password string
-	Db       int
+	Db       uint8
 }
 
-//this method implements ConfLoader interface.
+//this method implements confLoader interface.
 //load redis options this method load redis runtime options.
-func (c *RedisOptions) loadOptions() {
+func (c *redisOptions) loadOptions() {
 	c.Addr = fmt.Sprintf("%s:%d", conf.Redis.Host, conf.Redis.Port)
 	c.Password = conf.Redis.Auth
 	c.Db = conf.Redis.Db
 }
 
 //server options
-type ServerOptions struct {
+type serverOptions struct {
 	Addr            string
 	EnableTLS       bool
 	ReadTimeout     time.Duration
 	WriteTimeout    time.Duration
 	IdleTimeout     time.Duration
-	MaxHeaderBytes  int
+	MaxHeaderBytes  uint64
 	SSLCertfilePath string
 	SSLKeyfilePath  string
 }
 
-//this method implements ConfLoader interface.
+//this method implements confLoader interface.
 //load server options this method load http server runtime option.
-func (c *ServerOptions) loadOptions() {
+func (c *serverOptions) loadOptions() {
 	//adress and port
 	c.Addr = fmt.Sprintf("%s:%d", conf.Server.Host, conf.Server.Port)
 	//read time out, unit(second)
@@ -153,22 +172,35 @@ func (c *ServerOptions) loadOptions() {
 }
 
 //jwt options
-type JwtOptions struct {
+type jwtOptions struct {
 	Secret string
 }
 
-//this method implements ConfLoader interface.
+//this method implements confLoader interface.
 //load jwt Options.
-func (c *JwtOptions) loadOptions() {
+func (c *jwtOptions) loadOptions() {
 	c.Secret = conf.Jwt.Secret
 }
 
+type logOptions struct {
+	Path      string
+	MaxAge    time.Duration
+	SplitTime time.Duration
+}
+
+func (c *logOptions) loadOptions() {
+	c.Path = conf.Log.Path
+	c.MaxAge = conf.Log.MaxAge * time.Second * 86400
+	c.SplitTime = conf.Log.SplitTime * time.Second * 86400
+}
+
 var (
-	AppConf    AppOptions
-	MysqlConf  MysqlOptions
-	RedisConf  RedisOptions
-	ServerConf ServerOptions
-	JwtConf    JwtOptions
+	CoreConf   coreOptions
+	MysqlConf  mysqlOptions
+	RedisConf  redisOptions
+	ServerConf serverOptions
+	JwtConf    jwtOptions
+	LogConf    logOptions
 )
 
 //init load app.yml and parsing config file.
@@ -188,17 +220,18 @@ func init() {
 
 	//combination struct and check type asserts
 	AllOptionsAsserts := []struct {
-		ConfLoader
+		confLoader
 	}{
-		{&AppConf},
+		{&CoreConf},
 		{&MysqlConf},
 		{&RedisConf},
 		{&ServerConf},
 		{&JwtConf},
+		{&LogConf},
 	}
 
 	//load all options
-	for _, o := range AllOptionsAsserts {
-		o.loadOptions()
+	for _, loader := range AllOptionsAsserts {
+		loader.loadOptions()
 	}
 }

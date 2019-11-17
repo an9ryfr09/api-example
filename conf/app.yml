@@ -1,17 +1,27 @@
-app:
+core:
   #value of sets: debug, test, release
   run_mode: "debug"
   database_type: "mysql"
   #value of cpu core numbers
   cpu_core_num: 6
+  #default perpage return numbers
+  per_page_num: 10
 mysql:
   host: "127.0.0.1"
   port: 3306
   user: "an9ryfr09"
   password: "yl83115$"
-  charset: "utf8"
+  charset: "utf8mb4"
+  #parse mysql datetime to golang time.Time
   parseTime: true
+  #timezone
   location: "Local"
+  #unit(second)
+  timeout: 10
+  #unit(second)
+  read_time_out: 30
+  #unit(second)
+  write_time_out: 60
   db_pre: "dyrs_"
   #global table name use singular
   singular_table_name: true
@@ -38,6 +48,12 @@ server:
   enable_tls: true
   ssl_certfile_path: "./ca/server.crt"
   ssl_keyfile_path: "./ca/server.key"
-
 jwt:
   secret: "jwt_an9ryfr09_#*?!"
+log:
+  #log file path
+  path: ./logs
+  #max life time(unit:day)
+  max_age: 1
+  #log split time(unit:day)
+  split_time: 1

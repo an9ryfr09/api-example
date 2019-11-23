@@ -19,7 +19,7 @@ func TestPaginator(t *testing.T) {
 	perPageNum = 10
 	page = 1
 
-	t.Run("paginator:", func(t *testing.T) {
+	t.Run("function Paginator", func(t *testing.T) {
 		totalPage, offset := Paginator(totalNum, perPageNum, page)
 
 		if totalPage != 10 || offset != 0 {
@@ -28,7 +28,7 @@ func TestPaginator(t *testing.T) {
 		}
 	})
 
-	t.Run("GeneratePaginInfo:", func(t *testing.T) {
+	t.Run("function GeneratePaginInfo", func(t *testing.T) {
 		totalPage, offset := Paginator(totalNum, perPageNum, page)
 		got := GeneratePaginInfo(totalNum, totalPage, page, perPageNum, offset)
 

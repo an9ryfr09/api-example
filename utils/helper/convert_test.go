@@ -19,8 +19,8 @@ func assertError(t *testing.T, got gin.H, want gin.H) {
 	}
 }
 
-func TestStruct2Map(t *testing.T) {
-	t.Run("struct to map:", func(t *testing.T) {
+func TestCovert(t *testing.T) {
+	t.Run("function Struct2Map", func(t *testing.T) {
 
 		test := testStruct{
 			Id:   0,
@@ -39,7 +39,7 @@ func TestStruct2Map(t *testing.T) {
 		assertError(t, got, want)
 	})
 
-	t.Run("struct to map via json", func(t *testing.T) {
+	t.Run("function Struct2MapViaJson", func(t *testing.T) {
 		test := testStruct{
 			Id:   5,
 			Name: "yanlei",
@@ -55,5 +55,27 @@ func TestStruct2Map(t *testing.T) {
 		}
 
 		assertError(t, got, want)
+	})
+
+	t.Run("function ParamTypeCovert", func(t *testing.T) {
+		maps := gin.H{}
+		wantType := gin.H{}
+		gotType := gin.H{}
+
+		maps["page"] = "1"
+		maps["perPageNum"] = "20"
+		maps["responseType"] = "jsonp"
+
+		ParamTypeCovert(maps)
+
+		wantType["page"] = reflect.Uint16
+		wantType["perPageNum"] = reflect.Uint16
+		wantType["responseType"] = reflect.String
+
+		gotType["page"] = reflect.TypeOf(maps["page"]).Kind()
+		gotType["perPageNum"] = reflect.TypeOf(maps["perPageNum"]).Kind()
+		gotType["responseType"] = reflect.TypeOf(maps["responseType"]).Kind()
+
+		assertError(t, gotType, wantType)
 	})
 }

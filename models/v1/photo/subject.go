@@ -104,7 +104,7 @@ type DetailFields struct {
 }
 
 type SubjectListParams struct {
-	DesignerId  uint64 `form:"designerId" json:"designerId,omitempty" map:"field:designerid"`
+	DesignerId  uint64 `form:"designerId" json:"designerId,omitempty" map:"field:designerid" validate:""`
 	HouseTypeId uint8  `form:"houseTypeId" json:"houseTypeId,omitempty" map:"field:housetype"`
 	StyleId     uint8  `form:"styleId" json:"styleId,omitempty" map:"field:style"`
 	AreaId      uint8  `form:"areaId" json:"areaId,omitempty" map:"field:area_id"`

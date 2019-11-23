@@ -8,6 +8,19 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+//defined enum type
+var ResponseTypes = map[string]bool{
+	"json":  true,
+	"jsonp": true,
+	"xml":   true,
+}
+
+//defined enum type
+var OrderTypes = map[string]bool{
+	"asc":  true,
+	"desc": true,
+}
+
 //Record wrap record struct
 type Record map[string]interface{}
 
@@ -26,11 +39,32 @@ func wrapRecord(data interface{}, pagin map[string]interface{}) (record Record) 
 }
 
 //Ok found record returns ok
-func Ok(c *gin.Context, data interface{}, pagin map[string]interface{}) {
-	c.SecureJSON(http.StatusOK, gin.H{
-		"msg":  http.StatusText(http.StatusOK),
-		"data": wrapRecord(data, pagin),
-	})
+func Ok(c *gin.Context, data interface{}, pagin map[string]interface{}, responseType string) {
+
+	switch responseType {
+	case "json":
+		c.SecureJSON(http.StatusOK, gin.H{
+			"msg":  http.StatusText(http.StatusOK),
+			"data": wrapRecord(data, pagin),
+		})
+	case "jsonp":
+		c.JSONP(http.StatusOK, fmt.Sprintf("callback=%s", data))
+	case "xml":
+		c.XML(http.StatusOK, gin.H{
+			"msg":  http.StatusText(http.StatusOK),
+			"data": wrapRecord(data, pagin),
+		})
+	case "yaml":
+		c.YAML(http.StatusOK, gin.H{
+			"msg":  http.StatusText(http.StatusOK),
+			"data": wrapRecord(data, pagin),
+		})
+	default:
+		c.SecureJSON(http.StatusOK, gin.H{
+			"msg":  http.StatusText(http.StatusOK),
+			"data": wrapRecord(data, pagin),
+		})
+	}
 }
 
 //ErrorMsg returns error message by http status code and param extMsg

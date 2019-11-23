@@ -4,7 +4,9 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"os/signal"
 	"sync"
+	"syscall"
 	"time"
 
 	"gopkg.in/yaml.v2"
@@ -75,6 +77,19 @@ var (
 	conf *confFile
 	mu   sync.RWMutex
 )
+
+func init() {
+	//reload config wait signal: SIGUSR1
+	s := make(chan os.Signal, 1)
+	signal.Notify(s, syscall.SIGUSR1)
+	go func() {
+		for {
+			<-s
+			Reload()
+			log.Println("Reloaded config")
+		}
+	}()
+}
 
 //Load parsing app.yml and load to struct in singleton
 //add R-lock with non-conflict

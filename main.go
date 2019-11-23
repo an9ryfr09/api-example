@@ -9,7 +9,6 @@ import (
 	"os"
 	"os/signal"
 	"runtime"
-	"syscall"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -31,9 +30,10 @@ func initServer() {
 
 	app = gin.New()
 
-	//set middleware
+	//add middleware
 	app.Use(gin.Logger())
 	app.Use(gin.Recovery())
+	// app.Use(middleware.Cors())
 	// app.Use(middleware.JWT())
 	// app.Use(middleware.Validator())
 
@@ -62,18 +62,7 @@ func initServer() {
 	}
 }
 
-func main() {
-	//reload config
-	s := make(chan os.Signal, 1)
-	signal.Notify(s, syscall.SIGUSR1)
-	go func() {
-		for {
-			<-s
-			loader.Reload()
-			log.Println("Reloaded config")
-		}
-	}()
-
+func startServer() {
 	//start up http server on goroutine, and receive unix signals to shutdown;
 	quit := make(chan os.Signal)
 	signal.Notify(quit, os.Interrupt)
@@ -85,4 +74,8 @@ func main() {
 		log.Fatal("Server Shutdown:", err)
 	}
 	log.Println("Server exiting")
+}
+
+func main() {
+	startServer()
 }

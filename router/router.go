@@ -15,15 +15,15 @@ func InitRouter(g *gin.Engine) {
 		//subject list
 		v1.GET("/subjects", handlerV1.SubjectList)
 		//subject detail
-		v1.GET("/subject/:id", handlerV1.SubjectDetail)
+		v1.GET("/subjects/:id", handlerV1.SubjectDetail)
 		//building list
 		v1.GET("/buildings", handlerV1.BuildingList)
 		//building detail
-		v1.GET("/building/:id", handlerV1.BuildingDetail)
+		v1.GET("/buildings/:id", handlerV1.BuildingDetail)
 		//designer list
 		v1.GET("/designers", handlerV1.DesignerList)
 		//designer detail
-		v1.GET("/designer/:id", handlerV1.DesignerDetail)
+		v1.GET("/designers/:id", handlerV1.DesignerDetail)
 	}
 
 	//setting router group of version 2
@@ -32,14 +32,14 @@ func InitRouter(g *gin.Engine) {
 		//subject list
 		v2.GET("/subjects", handlerV2.SubjectList)
 		//subject detail
-		v2.GET("/subject/:id", handlerV2.SubjectDetail)
+		v2.GET("/subjects/:id", handlerV2.SubjectDetail)
 		//building list
 		v2.GET("/buildings", handlerV2.BuildingList)
 		//building detail
-		v2.GET("/building/:id", handlerV2.BuildingDetail)
+		v2.GET("/buildings/:id", handlerV2.BuildingDetail)
 		//designer list
 		v2.GET("/designers", handlerV2.DesignerList)
 		//designer detail
-		v2.GET("/designer/:id", handlerV2.DesignerDetail)
+		v2.GET("/designers/:id", handlerV2.DesignerDetail)
 	}
 }

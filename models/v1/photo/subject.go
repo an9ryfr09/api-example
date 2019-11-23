@@ -7,6 +7,8 @@ import (
 	"reflect"
 	"strings"
 	"time"
+
+	"github.com/gin-gonic/gin"
 )
 
 type Subject struct{}
@@ -16,7 +18,7 @@ type ListFields struct {
 	//主键
 	Id uint64 `json:"id"`
 	//标题
-	Subject string `json:"subject" form:"subject"`
+	Subject string `json:"subject,omitempty" form:"subject"`
 	//关键词
 	Keywords string `json:"keywords"`
 	//张数
@@ -102,20 +104,19 @@ type DetailFields struct {
 }
 
 type SubjectListParams struct {
-	model.ListParams
-	DesignerId     uint64 `form:"designer_id" json:"designer_id"`
-	CompanyId      uint64 `form:"company_id"`
-	HouseTypeId    uint8  `form:"houseTypeId"`
-	StyleId        uint8  `form:"style_id"`
-	AreaId         uint8  `form:"area_id"`
-	SiteId         uint8  `form:"site_id"`
-	LoupanId       uint64 `form:"loupan_id"`
-	DecorationType uint8  `form:"decoration_type"`
-	Type           uint8  `form:"type"`
+	DesignerId  uint64 `form:"designerId" json:"designerId,omitempty" map:"field:designerid"`
+	HouseTypeId uint8  `form:"houseTypeId" json:"houseTypeId,omitempty" map:"field:housetype"`
+	StyleId     uint8  `form:"styleId" json:"styleId,omitempty" map:"field:style"`
+	AreaId      uint8  `form:"areaId" json:"areaId,omitempty" map:"field:area_id"`
+	SiteId      uint8  `form:"siteId" json:"siteId,omitempty" map:"field:site_id"`
+	Type        uint8  `form:"type" json:"type,omitempty" map:"field:type"`
+	IsShow      string `form:"-" json:"isshow,omitempty" map:"field:isshow;default:yes"`
 }
 
-type SubjectDetailParams struct {
-	model.DetailParams
+type DetailParams struct {
+	model.BaseParams
+	Id     uint64 `map:"field:id"`
+	IsShow string `map:"field:isshow;default:yes"`
 }
 
 var photo *Photo
@@ -128,26 +129,29 @@ func (*Subject) TableName() string {
 }
 
 //List get query result for data list
-func (s *Subject) List(p SubjectListParams) (fields []ListFields, pagin map[string]interface{}, notFound bool) {
+func (s *Subject) List(baseParamsMaps gin.H, listParamsMaps map[string]interface{}) (fields []ListFields, pagin gin.H, notFound bool) {
 	var totalNum uint32
+	db = db.Table(s.TableName())
 
-	db.Table(s.TableName()).Count(&totalNum)
+	db.Where(listParamsMaps).Count(&totalNum)
+
 	//get pagin data
-	totalPage, offset := helper.Paginator(totalNum, p.PerPageNum, p.Page)
-	if err := db.Table(s.TableName()).Offset(offset).Limit(p.PerPageNum).Scan(&fields).Error; err != nil {
+	totalPage, offset := helper.Paginator(totalNum, baseParamsMaps["perPageNum"].(uint16), baseParamsMaps["page"].(uint16))
+
+	if err := db.Where(listParamsMaps).Offset(offset).Order(baseParamsMaps["orderField"].(string) + " " + baseParamsMaps["orderType"].(string)).Limit(baseParamsMaps["perPageNum"].(uint16)).Scan(&fields).Error; err != nil {
 		return []ListFields{}, pagin, true
 	}
 
 	//get pagin info
-	pagin = helper.GeneratePaginInfo(totalNum, totalPage, p.Page, p.PerPageNum, offset)
+	pagin = helper.GeneratePaginInfo(totalNum, totalPage, baseParamsMaps["page"].(uint16), baseParamsMaps["perPageNum"].(uint16), offset)
 	return
 }
 
 //Detail get query result for data detail
-func (s *Subject) Detail(id uint64) (fields DetailFields, notFound bool) {
-	notFound = db.Table(s.TableName()).Where("id = ?", id).Scan(&fields).RecordNotFound()
-	if notFound {
-		return DetailFields{}, notFound
+func (s *Subject) Detail(detailParamsMaps map[string]interface{}) (fields DetailFields, err error) {
+	if db.HasTable(s.TableName()) {
+		err := db.Table(s.TableName()).Where(detailParamsMaps).Scan(&fields).Error
+		return fields, err
 	}
-	return
+	return DetailFields{}, err
 }

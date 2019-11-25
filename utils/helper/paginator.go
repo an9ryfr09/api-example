@@ -35,7 +35,7 @@ func Paginator(totalNum uint32, perPageNum uint16, page uint16) (totalPage uint1
 //@param totalPage total page numbers
 //@param page current page number
 //@param offset perpage begin offset number
-func GeneratePaginInfo(totalNum uint32, totalPage uint16, page uint16, perPageNum uint16, offset uint16) gin.H {
+func GeneratePaginInfo(totalNum uint32, totalPage uint16, page uint16, perPageNum uint16, offset uint16) map[string]interface{} {
 	return gin.H{
 		"totalNum":   totalNum,
 		"totalPage":  totalPage,

@@ -34,7 +34,7 @@ func slice2MapWithContain(slice []string, covertLower bool) map[string]bool {
 //		Age uint8 `map:field:age;default:25`
 //	}
 //
-func Struct2Map(structs interface{}) (maps gin.H) {
+func Struct2Map(structs interface{}) (maps map[string]interface{}) {
 	var tag, field string
 
 	typeObj := reflect.TypeOf(structs)
@@ -87,7 +87,7 @@ begin:
 
 //Struct2MapViaJson is struct to map via json
 //@structs struct elements
-func Struct2MapViaJson(structs interface{}) (maps gin.H) {
+func Struct2MapViaJson(structs interface{}) (maps map[string]interface{}) {
 	j, _ := json.Marshal(structs)
 	json.Unmarshal(j, &maps)
 	return
@@ -95,7 +95,7 @@ func Struct2MapViaJson(structs interface{}) (maps gin.H) {
 
 //ParamTypeCovert covert base params
 //@param params base params sets
-func ParamTypeCovert(params gin.H) {
+func ParamTypeCovert(params map[string]interface{}) {
 	for k, p := range params {
 		switch k {
 		case "page", "perPageNum":

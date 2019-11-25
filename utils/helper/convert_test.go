@@ -13,7 +13,7 @@ type testStruct struct {
 	Age  uint16 `map:"field:age;default:30" json:"age,number"`
 }
 
-func assertError(t *testing.T, got gin.H, want gin.H) {
+func assertError(t *testing.T, got map[string]interface{}, want map[string]interface{}) {
 	if !reflect.DeepEqual(got, want) {
 		t.Errorf("got type of %s, want type of %s", got, want)
 	}
@@ -58,9 +58,9 @@ func TestCovert(t *testing.T) {
 	})
 
 	t.Run("function ParamTypeCovert", func(t *testing.T) {
-		maps := gin.H{}
-		wantType := gin.H{}
-		gotType := gin.H{}
+		maps := map[string]interface{}{}
+		wantType := map[string]interface{}{}
+		gotType := map[string]interface{}{}
 
 		maps["page"] = "1"
 		maps["perPageNum"] = "20"

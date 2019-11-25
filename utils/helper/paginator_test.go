@@ -3,8 +3,6 @@ package helper
 import (
 	"reflect"
 	"testing"
-
-	"github.com/gin-gonic/gin"
 )
 
 var (
@@ -32,7 +30,7 @@ func TestPaginator(t *testing.T) {
 		totalPage, offset := Paginator(totalNum, perPageNum, page)
 		got := GeneratePaginInfo(totalNum, totalPage, page, perPageNum, offset)
 
-		want := gin.H{
+		want := map[string]interface{}{
 			"totalNum":   totalNum,
 			"totalPage":  uint16(10),
 			"page":       page,

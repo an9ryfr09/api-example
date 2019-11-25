@@ -21,6 +21,7 @@ func init() {
 	initServer()
 }
 
+//initServer Initialization http or https server configure
 func initServer() {
 	//set cpu core numbers
 	runtime.GOMAXPROCS(int(loader.Load().Core.CpuCoreNum))
@@ -62,6 +63,7 @@ func initServer() {
 	}
 }
 
+//startServer start http or https server on goroutine
 func startServer() {
 	//start up http server on goroutine, and receive unix signals to shutdown;
 	quit := make(chan os.Signal)

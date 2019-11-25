@@ -102,12 +102,12 @@ type DetailFields struct {
 }
 
 type SubjectListParams struct {
-	DesignerId  uint64 `form:"designerId" json:"designerId,omitempty" map:"field:designerid" validate:"numeric"`
-	HouseTypeId uint8  `form:"houseTypeId" json:"houseTypeId,omitempty" map:"field:housetype" validate:"numeric"`
-	StyleId     uint8  `form:"styleId" json:"styleId,omitempty" map:"field:style" validate:"numeric"`
-	AreaId      uint8  `form:"areaId" json:"areaId,omitempty" map:"field:area_id" validate:"numeric"`
-	SiteId      uint8  `form:"siteId" json:"siteId,omitempty" map:"field:site_id" validate:"numeric"`
-	Type        uint8  `form:"type" json:"type,omitempty" map:"field:type" validate:"numeric"`
+	DesignerId  uint64 `form:"designerId" json:"designerId,omitempty" map:"field:designerid" binding:"omitempty,numeric"`
+	HouseTypeId uint8  `form:"houseTypeId" json:"houseTypeId,omitempty" map:"field:housetype" binding:"omitempty,numeric"`
+	StyleId     uint8  `form:"styleId" json:"styleId,omitempty" map:"field:style" binding:"omitempty,numeric"`
+	AreaId      uint8  `form:"areaId" json:"areaId,omitempty" map:"field:area_id" binding:"omitempty,numeric"`
+	SiteId      uint8  `form:"siteId" json:"siteId,omitempty" map:"field:site_id" binding:"omitempty,numeric"`
+	Type        uint8  `form:"type" json:"type,omitempty" map:"field:type" binding:"omitempty,numeric"`
 	IsShow      string `form:"-" json:"isshow,omitempty" map:"field:isshow;default:yes"`
 }
 

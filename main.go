@@ -1,6 +1,7 @@
 package main
 
 import (
+	middleware "a6-api/middleware/verification"
 	"a6-api/router"
 	"a6-api/utils/loader"
 	"context"
@@ -34,9 +35,9 @@ func initServer() {
 	//add middleware
 	app.Use(gin.Logger())
 	app.Use(gin.Recovery())
+	app.Use(middleware.Validator())
 	// app.Use(middleware.Cors())
 	// app.Use(middleware.JWT())
-	// app.Use(middleware.Validator())
 
 	//initialization routers
 	router.InitRouter(app)

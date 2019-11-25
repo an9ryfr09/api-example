@@ -22,5 +22,6 @@ require (
 	github.com/ugorji/go v1.1.7 // indirect
 	golang.org/x/sys v0.0.0-20191118133127-cf1e2d577169 // indirect
 	google.golang.org/appengine v1.6.5 // indirect
+	gopkg.in/go-playground/validator.v8 v8.18.2
 	gopkg.in/yaml.v2 v2.2.5
 )

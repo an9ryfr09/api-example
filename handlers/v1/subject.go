@@ -23,16 +23,16 @@ type mStruct struct {
 //SubjectList return subject list
 func SubjectList(c *gin.Context) {
 	baseParamsStruct := model.BaseParams{}
-	listParamsStruct := photo.SubjectListParams{}
 	baseParamsMaps := map[string]interface{}{}
+	listParamsStruct := photo.SubjectListParams{}
 	listParamsMaps := map[string]interface{}{}
 
-	if err := c.ShouldBind(&baseParamsStruct); err != nil {
+	if err := c.ShouldBindQuery(&baseParamsStruct); err != nil {
 		handler.ErrorMsg(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	if err := c.ShouldBind(&listParamsStruct); err != nil {
+	if err := c.ShouldBindQuery(&listParamsStruct); err != nil {
 		handler.ErrorMsg(c, http.StatusBadRequest, err.Error())
 		return
 	}
@@ -55,7 +55,7 @@ func SubjectDetail(c *gin.Context) {
 	detailParamsStruct := photo.DetailParams{}
 	detailParamsMaps := make(map[string]interface{})
 
-	if c.ShouldBind(&baseParamsStruct) != nil {
+	if c.ShouldBindQuery(&baseParamsStruct) != nil {
 		handler.ErrorMsg(c, http.StatusBadRequest, "")
 	}
 

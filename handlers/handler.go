@@ -79,4 +79,5 @@ func ErrorMsg(c *gin.Context, httpStatusCode int, extMsg string) {
 		"msg":  fmt.Sprintf("%s", msg),
 		"data": []string{},
 	})
+	c.Abort()
 }

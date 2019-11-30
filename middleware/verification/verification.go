@@ -5,7 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
-	"gopkg.in/go-playground/validator.v8"
+	"gopkg.in/go-playground/validator.v9"
 )
 
 func Validator() gin.HandlerFunc {
@@ -15,6 +15,5 @@ func Validator() gin.HandlerFunc {
 			v.RegisterValidation("orderTypeValid", verification.OrderTypeValid)
 			v.RegisterValidation("responseTypeValid", verification.ResponseTypeValid)
 		}
-		c.Next()
 	}
 }

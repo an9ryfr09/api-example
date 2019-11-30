@@ -28,18 +28,19 @@ func SubjectList(c *gin.Context) {
 	listParamsMaps := map[string]interface{}{}
 
 	if err := c.ShouldBindQuery(&baseParamsStruct); err != nil {
-		handler.ErrorMsg(c, http.StatusBadRequest, err.Error())
+		handler.ErrorMsg(c, http.StatusBadRequest, baseParamsStruct.Error(err))
 		return
 	}
-
-	if err := c.ShouldBindQuery(&listParamsStruct); err != nil {
-		handler.ErrorMsg(c, http.StatusBadRequest, err.Error())
-		return
-	}
-
 	baseParamsMaps = helper.Struct2Map(baseParamsStruct)
 	helper.ParamTypeCovert(baseParamsMaps)
+
+	if err := c.ShouldBindQuery(&listParamsStruct); err != nil {
+		handler.ErrorMsg(c, http.StatusBadRequest, listParamsStruct.Error(err))
+		return
+	}
 	listParamsMaps = helper.Struct2Map(listParamsStruct)
+
+	baseParamsStruct.SwapParam(baseParamsMaps, listParamsMaps)
 
 	data, pagin, notFound := subjectModel.List(baseParamsMaps, listParamsMaps)
 	if notFound {

@@ -25,6 +25,7 @@ This is a restful style API for a6
 * `utils:` tools packages
 * * `helper:` helper functions
 * * `loader:` load configure file
+* * `verification:` validate handles
 * `vendor:` the third party packages
 
 

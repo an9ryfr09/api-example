@@ -5,8 +5,11 @@ import (
 	"a6-api/utils/helper"
 	"fmt"
 	"reflect"
+	"strconv"
 	"strings"
 	"time"
+
+	"gopkg.in/go-playground/validator.v9"
 )
 
 type Subject struct{}
@@ -102,13 +105,41 @@ type DetailFields struct {
 }
 
 type SubjectListParams struct {
-	DesignerId  uint64 `form:"designerId" json:"designerId,omitempty" map:"field:designerid" binding:"omitempty,numeric"`
-	HouseTypeId uint8  `form:"houseTypeId" json:"houseTypeId,omitempty" map:"field:housetype" binding:"omitempty,numeric"`
-	StyleId     uint8  `form:"styleId" json:"styleId,omitempty" map:"field:style" binding:"omitempty,numeric"`
-	AreaId      uint8  `form:"areaId" json:"areaId,omitempty" map:"field:area_id" binding:"omitempty,numeric"`
-	SiteId      uint8  `form:"siteId" json:"siteId,omitempty" map:"field:site_id" binding:"omitempty,numeric"`
-	Type        uint8  `form:"type" json:"type,omitempty" map:"field:type" binding:"omitempty,numeric"`
+	DesignerId  uint64 `form:"designerId" json:"designerId,omitempty" map:"field:designerid"`
+	HouseTypeId uint8  `form:"houseTypeId" json:"houseTypeId,omitempty" map:"field:housetype"`
+	StyleId     uint8  `form:"styleId" json:"styleId,omitempty" map:"field:style"`
+	AreaId      uint8  `form:"areaId" json:"areaId,omitempty" map:"field:area_id"`
+	SiteId      uint8  `form:"siteId" json:"siteId,omitempty" map:"field:site_id"`
+	Type        uint8  `form:"type" json:"type,omitempty" map:"field:type" binding:"min=1,max=2"`
 	IsShow      string `form:"-" json:"isshow,omitempty" map:"field:isshow;default:yes"`
+	OrderField  string `form:"orderField" json:"orderField" map:"field:orderField;default:id"`
+}
+
+func (*SubjectListParams) Error(err interface{}) string {
+	//Gin ShouldBindQuery's errors
+	if e, ok := err.(*strconv.NumError); ok {
+		return fmt.Sprintf("This value %s is illegal", e.Num)
+	} else if errors, has := err.(validator.ValidationErrors); has {
+		//Validator.v9's errors
+		for _, e := range errors {
+			if e.StructNamespace() == "SubjectListParams.OrderField" {
+				switch e.ActualTag() {
+				case "OrderField":
+					return "Param \"OrderField\" only is [\"id\", \"main_sort\", \"sub_sort\", \"personal_sort\", \"special_sort\", \"zmt_sort\"]"
+				}
+			}
+			if e.StructNamespace() == "SubjectListParams.Type" {
+				switch e.ActualTag() {
+				case "min":
+					return fmt.Sprintf("Param \"Type\" must greater than or equal to %s", e.Param())
+				case "max":
+					return fmt.Sprintf("Param \"Type\" must Less than or equal to %s", e.Param())
+				}
+			}
+		}
+	}
+	//Other errors
+	return "Invalid params"
 }
 
 type DetailParams struct {
@@ -129,8 +160,8 @@ func (*Subject) TableName() string {
 //List get query result for data list
 func (s *Subject) List(baseParamsMaps map[string]interface{}, listParamsMaps map[string]interface{}) (fields []ListFields, pagin map[string]interface{}, notFound bool) {
 	var totalNum uint32
-	db = db.Table(s.TableName())
 
+	db = db.Table(s.TableName())
 	db.Where(listParamsMaps).Count(&totalNum)
 
 	//get pagin data

@@ -1,13 +1,15 @@
 package main
 
 import (
-	configure "a6-api/pkg/loader"
-	router "a6-api/routers"
+	middleware "a6-api/middleware/verification"
+	"a6-api/router"
+	"a6-api/utils/loader"
 	"context"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
+	"runtime"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -20,38 +22,51 @@ func init() {
 	initServer()
 }
 
+//initServer Initialization http or https server configure
 func initServer() {
-	gin.SetMode(configure.AppConf.RunMode)
+	//set cpu core numbers
+	runtime.GOMAXPROCS(int(loader.Load().Core.CpuCoreNum))
+
+	//run mode [debug|test|release]
+	gin.SetMode(loader.Load().Core.RunMode)
+
 	app = gin.New()
+
+	//add middleware
 	app.Use(gin.Logger())
 	app.Use(gin.Recovery())
-	// app.Use(jwt.JWT())
+	app.Use(middleware.Validator())
+	// app.Use(middleware.Cors())
+	// app.Use(middleware.JWT())
+
+	//initialization routers
 	router.InitRouter(app)
-	//setting server options
+
+	//set server options
 	srv := &http.Server{
-		Addr:           configure.ServerConf.Addr,
+		Addr:           loader.Load().Server.Addr,
 		Handler:        app,
-		ReadTimeout:    configure.ServerConf.ReadTimeout,
-		WriteTimeout:   configure.ServerConf.WriteTimeout,
-		IdleTimeout:    configure.ServerConf.IdleTimeout,
-		MaxHeaderBytes: configure.ServerConf.MaxHeaderBytes,
+		ReadTimeout:    loader.Load().Server.ReadTimeout * time.Second,
+		WriteTimeout:   loader.Load().Server.WriteTimeout * time.Second,
+		IdleTimeout:    loader.Load().Server.IdleTimeout * time.Second,
+		MaxHeaderBytes: int(loader.Load().Server.MaxHeaderBytes),
 	}
 
-	//if this item value is true, then enabled https protocol, otherwise use http protocol only
-	if configure.ServerConf.EnableTLS == true {
+	//if this item value is true, then enabled the https protocol, otherwise use the http protocol only
+	if loader.Load().Server.EnableTLS == true {
 		go func() {
-			srv.ListenAndServeTLS(configure.ServerConf.SSLCertfilePath, configure.ServerConf.SSLKeyfilePath)
+			srv.ListenAndServeTLS(loader.Load().Server.SSLCertfilePath, loader.Load().Server.SSLKeyfilePath)
 		}()
-		// app.RunTLS(configure.ServerConf.Addr, configure.ServerConf.SSLCertfilePath, configure.ServerConf.SSLKeyfilePath)
 	} else {
 		go func() {
 			srv.ListenAndServe()
 		}()
-		// app.Run(configure.ServerConf.Addr)
 	}
 }
 
-func main() {
+//startServer start http or https server on goroutine
+func startServer() {
+	//start up http server on goroutine, and receive unix signals to shutdown;
 	quit := make(chan os.Signal)
 	signal.Notify(quit, os.Interrupt)
 	<-quit
@@ -62,4 +77,8 @@ func main() {
 		log.Fatal("Server Shutdown:", err)
 	}
 	log.Println("Server exiting")
+}
+
+func main() {
+	startServer()
 }

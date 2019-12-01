@@ -1,8 +1,7 @@
-package jwt
+package middleware
 
 import (
-	e "a6-api/pkg/error"
-	"a6-api/utils"
+	"a6-api/utils/helper"
 	"net/http"
 	"time"
 
@@ -14,23 +13,23 @@ func JWT() gin.HandlerFunc {
 		var code int
 		var data interface{}
 
-		code = e.SUCCESS
+		code = http.StatusOK
 		token := c.Query("token")
 		if token == "" {
-			code = e.INVALID_PARAMS
+			code = http.StatusBadRequest
 		} else {
-			claims, err := utils.ParseToken(token)
+			claims, err := helper.ParseToken(token)
 			if err != nil {
-				code = e.ERROR_AUTH_CHECK_TOKEN_FAIL
+				code = http.StatusUnauthorized
 			} else if time.Now().Unix() > claims.ExpiresAt {
-				code = e.ERROR_AUTH_CHECK_TOKEN_TIMEOUT
+				code = http.StatusUnauthorized
 			}
 		}
 
-		if code != e.SUCCESS {
+		if code != http.StatusOK {
 			c.JSON(http.StatusUnauthorized, gin.H{
 				"code": code,
-				"msg":  e.GetMessage(code),
+				"msg":  http.StatusText(code),
 				"data": data,
 			})
 

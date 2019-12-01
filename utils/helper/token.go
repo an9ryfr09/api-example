@@ -1,4 +1,4 @@
-package utils
+package helper
 
 func ParseToken(token string) (string, error) {
 	t := token

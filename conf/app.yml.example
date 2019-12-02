@@ -39,6 +39,7 @@ redis:
   Protocol: "tcp"
   Db: 0
 server:
+  host: "localhost"
   addr: ":8316"
   read_timeout: 30
   write_timeout: 30

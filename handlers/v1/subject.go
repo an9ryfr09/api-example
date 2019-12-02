@@ -15,11 +15,6 @@ import (
 
 var subjectModel *photo.Subject
 
-type mStruct struct {
-	Subject string
-	Nums    uint32
-}
-
 //SubjectList return subject list
 func SubjectList(c *gin.Context) {
 	baseParamsStruct := model.BaseParams{}
@@ -28,14 +23,14 @@ func SubjectList(c *gin.Context) {
 	listParamsMaps := map[string]interface{}{}
 
 	if err := c.ShouldBindQuery(&baseParamsStruct); err != nil {
-		handler.ErrorMsg(c, http.StatusBadRequest, baseParamsStruct.Error(err))
+		handler.ErrorMsg(c, http.StatusBadRequest, baseParamsStruct.Error(err), []string{})
 		return
 	}
 	baseParamsMaps = helper.Struct2Map(baseParamsStruct)
 	helper.ParamTypeCovert(baseParamsMaps)
 
 	if err := c.ShouldBindQuery(&listParamsStruct); err != nil {
-		handler.ErrorMsg(c, http.StatusBadRequest, listParamsStruct.Error(err))
+		handler.ErrorMsg(c, http.StatusBadRequest, listParamsStruct.Error(err), []string{})
 		return
 	}
 	listParamsMaps = helper.Struct2Map(listParamsStruct)
@@ -44,7 +39,7 @@ func SubjectList(c *gin.Context) {
 
 	data, pagin, notFound := subjectModel.List(baseParamsMaps, listParamsMaps)
 	if notFound {
-		handler.ErrorMsg(c, http.StatusNotFound, "not found record")
+		handler.ErrorMsg(c, http.StatusNotFound, "not found record", []string{})
 		return
 	}
 	handler.Ok(c, data, pagin, baseParamsStruct.ResponseType)
@@ -57,14 +52,14 @@ func SubjectDetail(c *gin.Context) {
 	detailParamsMaps := make(map[string]interface{})
 
 	if c.ShouldBindQuery(&baseParamsStruct) != nil {
-		handler.ErrorMsg(c, http.StatusBadRequest, "")
+		handler.ErrorMsg(c, http.StatusBadRequest, "", []string{})
 	}
 
 	detailParamsMaps = helper.Struct2Map(detailParamsStruct)
 
 	id, err := strconv.ParseUint(c.Param("id"), 10, 64)
 	if err != nil {
-		handler.ErrorMsg(c, http.StatusBadRequest, "Invalid params")
+		handler.ErrorMsg(c, http.StatusBadRequest, "Invalid params", []string{})
 		return
 	}
 
@@ -73,10 +68,10 @@ func SubjectDetail(c *gin.Context) {
 
 	if err != nil {
 		if gorm.IsRecordNotFoundError(err) {
-			handler.ErrorMsg(c, http.StatusNotFound, err.Error())
+			handler.ErrorMsg(c, http.StatusNotFound, err.Error(), []string{})
 			return
 		}
-		handler.ErrorMsg(c, http.StatusBadRequest, "Unknown error")
+		handler.ErrorMsg(c, http.StatusBadRequest, "Unknown error", []string{})
 	} else {
 		handler.Ok(c, data, map[string]interface{}{}, baseParamsStruct.ResponseType)
 	}

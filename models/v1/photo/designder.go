@@ -1,7 +1,6 @@
 package photo
 
 type Designer struct {
-	Photo
 }
 
 func (d *Designer) List() string {

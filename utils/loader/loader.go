@@ -52,6 +52,7 @@ type confFile struct {
 		Db       uint8  `yaml:"db"`
 	}
 	Server struct {
+		Host            string        `yaml:"host"`
 		Addr            string        `yaml:"addr"`
 		ReadTimeout     time.Duration `yaml:"read_timeout"`
 		WriteTimeout    time.Duration `yaml:"write_timeout"`

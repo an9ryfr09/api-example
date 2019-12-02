@@ -68,7 +68,7 @@ func Ok(c *gin.Context, data interface{}, pagin map[string]interface{}, response
 }
 
 //ErrorMsg returns error message by http status code and param extMsg
-func ErrorMsg(c *gin.Context, httpStatusCode int, extMsg string) {
+func ErrorMsg(c *gin.Context, httpStatusCode int, extMsg string, data []string) {
 	var msg string
 	if extMsg != "" {
 		msg = extMsg
@@ -77,7 +77,7 @@ func ErrorMsg(c *gin.Context, httpStatusCode int, extMsg string) {
 	}
 	c.SecureJSON(httpStatusCode, gin.H{
 		"msg":  fmt.Sprintf("%s", msg),
-		"data": []string{},
+		"data": data,
 	})
 	c.Abort()
 }

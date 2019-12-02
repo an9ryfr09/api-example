@@ -15,7 +15,7 @@ import (
 type Subject struct{}
 
 //function list return fields
-type ListFields struct {
+type SubjectListFields struct {
 	//主键
 	Id uint64 `json:"id"`
 	//标题
@@ -95,7 +95,7 @@ type ListFields struct {
 }
 
 type DetailFields struct {
-	ListFields
+	SubjectListFields
 	//seo描述
 	SEODescription string `gorm:"descriptions" json:"descriptions"`
 	//户型图
@@ -110,7 +110,7 @@ type SubjectListParams struct {
 	StyleId     uint8  `form:"styleId" json:"styleId,omitempty" map:"field:style"`
 	AreaId      uint8  `form:"areaId" json:"areaId,omitempty" map:"field:area_id"`
 	SiteId      uint8  `form:"siteId" json:"siteId,omitempty" map:"field:site_id"`
-	Type        uint8  `form:"type" json:"type,omitempty" map:"field:type" binding:"min=1,max=2"`
+	Type        uint8  `form:"type" json:"type,omitempty" map:"field:type" binding:"omitempty,min=1,max=2"`
 	IsShow      string `form:"-" json:"isshow,omitempty" map:"field:isshow;default:yes"`
 	OrderField  string `form:"orderField" json:"orderField" map:"field:orderField;default:id"`
 }
@@ -158,7 +158,7 @@ func (*Subject) TableName() string {
 }
 
 //List get query result for data list
-func (s *Subject) List(baseParamsMaps map[string]interface{}, listParamsMaps map[string]interface{}) (fields []ListFields, pagin map[string]interface{}, notFound bool) {
+func (s *Subject) List(baseParamsMaps map[string]interface{}, listParamsMaps map[string]interface{}) (fields []SubjectListFields, pagin map[string]interface{}, notFound bool) {
 	var totalNum uint32
 
 	db = db.Table(s.TableName())
@@ -168,7 +168,7 @@ func (s *Subject) List(baseParamsMaps map[string]interface{}, listParamsMaps map
 	totalPage, offset := helper.Paginator(totalNum, baseParamsMaps["perPageNum"].(uint16), baseParamsMaps["page"].(uint16))
 
 	if err := db.Where(listParamsMaps).Offset(offset).Order(baseParamsMaps["orderField"].(string) + " " + baseParamsMaps["orderType"].(string)).Limit(baseParamsMaps["perPageNum"].(uint16)).Scan(&fields).Error; err != nil {
-		return []ListFields{}, pagin, true
+		return []SubjectListFields{}, pagin, true
 	}
 
 	//get pagin info

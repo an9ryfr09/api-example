@@ -47,6 +47,10 @@ func InitRouter(g *gin.Engine) {
 		v1.GET("/spaces", handlerV1.SpaceList)
 		//style list
 		v1.GET("/styles", handlerV1.StyleList)
+		//housetype list
+		v1.GET("/housetypes", handlerV1.HousetypeList)
+		//houseprice list
+		v1.GET("/houseprices", handlerV1.HousepriceList)
 	}
 
 	//setting router group of version 2

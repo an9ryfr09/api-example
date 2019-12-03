@@ -14,6 +14,8 @@ func Validator() gin.HandlerFunc {
 			v.RegisterValidation("subjectOrderFieldValid", verification.SubjectOrderFieldValid)
 			v.RegisterValidation("orderTypeValid", verification.OrderTypeValid)
 			v.RegisterValidation("responseTypeValid", verification.ResponseTypeValid)
+			v.RegisterValidation("housePriceFieldValid", verification.HousePriceFieldValid)
+			v.RegisterValidation("houseTypeFieldValid", verification.HouseTypeFieldValid)
 		}
 	}
 }

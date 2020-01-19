@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"golang.org/x/net/http2"
 )
 
 var app *gin.Engine
@@ -55,6 +56,8 @@ func initServer() {
 	//if this item value is true, then enabled the https protocol, otherwise use the http protocol only
 	if loader.Load().Server.EnableTLS == true {
 		go func() {
+			//enabled http2
+			http2.ConfigureServer(srv, &http2.Server{})
 			srv.ListenAndServeTLS(loader.Load().Server.SSLCertfilePath, loader.Load().Server.SSLKeyfilePath)
 		}()
 	} else {

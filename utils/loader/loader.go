@@ -108,13 +108,11 @@ func Reload() {
 	confFile, err := ioutil.ReadFile("conf/app.yml")
 	if err != nil {
 		log.Fatalf("load file app.yml fail! #%v ", err)
-		os.Exit(1)
 	}
 
 	err = yaml.Unmarshal(confFile, &config)
 	if err != nil {
 		log.Fatalf("parsing file app.yml fail! #%v ", err)
-		os.Exit(1)
 	}
 
 	mu.Lock()

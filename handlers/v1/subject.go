@@ -17,6 +17,7 @@ var subjectModel *photo.Subject
 
 //SubjectList return subject list
 func SubjectList(c *gin.Context) {
+
 	baseParamsStruct := model.BaseParams{}
 	baseParamsMaps := map[string]interface{}{}
 	listParamsStruct := photo.SubjectListParams{}
@@ -26,6 +27,7 @@ func SubjectList(c *gin.Context) {
 		handler.ErrorMsg(c, http.StatusBadRequest, baseParamsStruct.Error(err), []string{})
 		return
 	}
+
 	baseParamsMaps = helper.Struct2Map(baseParamsStruct)
 	helper.ParamTypeCovert(baseParamsMaps)
 
@@ -47,6 +49,7 @@ func SubjectList(c *gin.Context) {
 
 //SubjectDetail return subject detail
 func SubjectDetail(c *gin.Context) {
+
 	baseParamsStruct := model.BaseParams{}
 	detailParamsStruct := photo.DetailParams{}
 	detailParamsMaps := make(map[string]interface{})

@@ -55,11 +55,11 @@ type SubjectListFields struct {
 	//修改用户
 	ModiUser string `json:"modiUser"`
 	//楼盘id
-	LoupanId uint64 `json:"loupanId"`
+	LoupanId uint16 `json:"loupanId"`
 	//站点id
-	SiteId uint8 `json:"siteId"`
+	SiteId uint16 `json:"siteId"`
 	//店面id
-	CompanyId uint32 `json:"companyId"`
+	CompanyId uint16 `json:"companyId"`
 	//工队id
 	TeamId uint64 `json:"teamId"`
 	//面积
@@ -94,7 +94,7 @@ type SubjectListFields struct {
 	Award string `json:"award"`
 }
 
-type DetailFields struct {
+type SubjectDetailParams struct {
 	SubjectListFields
 	//seo描述
 	SEODescription string `gorm:"descriptions" json:"descriptions"`
@@ -112,7 +112,7 @@ type SubjectListParams struct {
 	SiteId      uint8  `form:"siteId" json:"siteId,omitempty" map:"field:site_id"`
 	Type        uint8  `form:"type" json:"type,omitempty" map:"field:type" binding:"omitempty,min=1,max=2"`
 	IsShow      string `form:"-" json:"isshow,omitempty" map:"field:isshow;default:yes"`
-	OrderField  string `form:"orderField" json:"orderField" map:"field:orderField;default:id"`
+	OrderField  string `form:"orderField" json:"orderField" map:"field:orderField;default:id" binding:"subjectOrderFieldValid"`
 }
 
 func (*SubjectListParams) Error(err interface{}) string {
@@ -124,7 +124,7 @@ func (*SubjectListParams) Error(err interface{}) string {
 		for _, e := range errors {
 			if e.StructNamespace() == "SubjectListParams.OrderField" {
 				switch e.ActualTag() {
-				case "OrderField":
+				case "subjectOrderFieldValid":
 					return "Param \"OrderField\" only is [\"id\", \"main_sort\", \"sub_sort\", \"personal_sort\", \"special_sort\", \"zmt_sort\"]"
 				}
 			}
@@ -145,7 +145,7 @@ func (*SubjectListParams) Error(err interface{}) string {
 type DetailParams struct {
 	model.BaseParams
 	Id     uint64 `map:"field:id"`
-	IsShow string `map:"field:isshow;default:yes"`
+	IsShow string `map:"field:is_show;default:yes"`
 }
 
 var photo *Photo
@@ -177,10 +177,10 @@ func (s *Subject) List(baseParamsMaps map[string]interface{}, listParamsMaps map
 }
 
 //Detail get query result for data detail
-func (s *Subject) Detail(detailParamsMaps map[string]interface{}) (fields DetailFields, err error) {
+func (s *Subject) Detail(detailParamsMaps map[string]interface{}) (fields SubjectDetailParams, err error) {
 	if db.HasTable(s.TableName()) {
 		err := db.Table(s.TableName()).Where(detailParamsMaps).Scan(&fields).Error
 		return fields, err
 	}
-	return DetailFields{}, err
+	return SubjectDetailParams{}, err
 }

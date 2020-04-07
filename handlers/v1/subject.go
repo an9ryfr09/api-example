@@ -51,7 +51,7 @@ func SubjectList(c *gin.Context) {
 func SubjectDetail(c *gin.Context) {
 
 	baseParamsStruct := model.BaseParams{}
-	detailParamsStruct := photo.DetailParams{}
+	detailParamsStruct := photo.SubjectDetailParams{}
 	detailParamsMaps := make(map[string]interface{})
 
 	if c.ShouldBindQuery(&baseParamsStruct) != nil {
